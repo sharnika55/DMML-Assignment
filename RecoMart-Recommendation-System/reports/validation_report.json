@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "datasets_checked": 2,
+    "passed": true
+  },
+  "datasets": [
+    {
+      "dataset": "interactions",
+      "metrics": {
+        "rows": 24,
+        "columns": [
+          "user_id",
+          "product_id",
+          "rating",
+          "event_timestamp",
+          "purchase_flag",
+          "session_id"
+        ],
+        "missing_values": 0,
+        "duplicate_rows": 0,
+        "rating_range_ok": true
+      },
+      "issues": []
+    },
+    {
+      "dataset": "products",
+      "metrics": {
+        "rows": 10,
+        "columns": [
+          "product_id",
+          "name",
+          "category",
+          "price",
+          "popularity_score"
+        ],
+        "missing_values": 0,
+        "duplicate_rows": 0
+      },
+      "issues": []
+    }
+  ]
+}

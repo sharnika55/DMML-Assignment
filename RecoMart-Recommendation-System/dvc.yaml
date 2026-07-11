@@ -1,1 +1,31 @@
-stages: {}
+stages:
+  ingest:
+    cmd: python ingestion/ingest_data.py
+    deps:
+      - data/raw/ratings/interactions.csv
+      - data/raw/api/products_api.json
+    outs:
+      - data/raw/ratings
+      - data/raw/api
+  validate:
+    cmd: python validation/validate_data.py
+    deps:
+      - data/raw/ratings
+      - data/raw/api
+    outs:
+      - reports/data_quality_report.pdf
+  prepare:
+    cmd: python preprocessing/prepare_data.py
+    deps:
+      - data/raw/ratings
+      - data/raw/api
+    outs:
+      - data/processed/prepared_interactions.csv
+  train:
+    cmd: python model/train_model.py
+    deps:
+      - data/processed/prepared_interactions.csv
+      - data/features/feature_table.csv
+    outs:
+      - data/models/recommendation_model.pkl
+      - data/models/model_metadata.json

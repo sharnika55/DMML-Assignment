@@ -1,0 +1,12 @@
+[
+  {"product_id": "P001", "name": "Wireless Mouse", "category": "Electronics", "price": 29.99, "popularity_score": 4.2},
+  {"product_id": "P002", "name": "Ergonomic Keyboard", "category": "Electronics", "price": 59.99, "popularity_score": 4.5},
+  {"product_id": "P003", "name": "Running Shoes", "category": "Sports", "price": 79.99, "popularity_score": 4.0},
+  {"product_id": "P004", "name": "Coffee Maker", "category": "Home", "price": 89.99, "popularity_score": 4.3},
+  {"product_id": "P005", "name": "Yoga Mat", "category": "Sports", "price": 24.99, "popularity_score": 3.8},
+  {"product_id": "P006", "name": "Water Bottle", "category": "Outdoors", "price": 15.99, "popularity_score": 4.1},
+  {"product_id": "P007", "name": "Desk Lamp", "category": "Home", "price": 34.99, "popularity_score": 3.7},
+  {"product_id": "P008", "name": "Backpack", "category": "Outdoors", "price": 49.99, "popularity_score": 4.4},
+  {"product_id": "P009", "name": "Noise Cancelling Headphones", "category": "Electronics", "price": 129.99, "popularity_score": 4.8},
+  {"product_id": "P010", "name": "Travel Pillow", "category": "Travel", "price": 19.99, "popularity_score": 3.9}
+]

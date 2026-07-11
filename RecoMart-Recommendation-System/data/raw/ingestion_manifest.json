@@ -1,0 +1,13 @@
+{
+  "ingested_at": "2026-07-11T11:00:00.846739",
+  "files": [
+    {
+      "source": "ratings",
+      "path": "data\\raw\\ratings\\2026\\07\\11\\interactions.csv"
+    },
+    {
+      "source": "api",
+      "path": "data\\raw\\api\\2026\\07\\11\\products.json"
+    }
+  ]
+}
