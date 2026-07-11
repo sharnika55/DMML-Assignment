@@ -1,9 +1,9 @@
-from orchestration.pipeline import run_pipeline
+from orchestration.prefect_pipeline import run_prefect_pipeline
 
 
 def main() -> None:
     print("RecoMart Recommendation System")
-    run_pipeline()
+    run_prefect_pipeline()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,14 @@
+artifact_uri: file:///C:\Users\sharnika kotrike\DMML-Assignment\RecoMart-Recommendation-System\mlruns/279912169704474871/b3f7ba1088a54e0c8bc3f8370e25bb58/artifacts
+end_time: 1783768619176
+entry_point_name: ''
+experiment_id: '279912169704474871'
+lifecycle_stage: active
+run_id: b3f7ba1088a54e0c8bc3f8370e25bb58
+run_name: recomart-nmf-run
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1783768618849
+status: 3
+tags: []
+user_id: sharnika kotrike

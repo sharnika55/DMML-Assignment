@@ -11,3 +11,16 @@
 2026-07-11 16:30:03,993 INFO Training recommendation model
 2026-07-11 16:30:04,043 INFO Model training completed
 2026-07-11 16:30:04,043 INFO Pipeline completed
+2026-07-11 16:32:27,936 INFO Starting end-to-end pipeline
+2026-07-11 16:32:27,939 INFO Starting ingestion
+2026-07-11 16:32:27,953 INFO Ingestion completed successfully
+2026-07-11 16:32:27,955 INFO Starting validation
+2026-07-11 16:32:28,013 INFO Validation completed
+2026-07-11 16:32:28,016 INFO Preparing data
+2026-07-11 16:32:29,192 INFO Data preparation completed
+2026-07-11 16:32:29,196 INFO Engineering features
+2026-07-11 16:32:29,216 INFO Feature engineering completed
+2026-07-11 16:32:29,217 INFO Registering feature store
+2026-07-11 16:32:29,230 INFO Training recommendation model
+2026-07-11 16:32:29,255 INFO Model training completed
+2026-07-11 16:32:29,255 INFO Pipeline completed

@@ -1,0 +1,9 @@
+artifact_location: file:///C:\Users\sharnika kotrike\DMML-Assignment\RecoMart-Recommendation-System\mlruns/279912169704474871
+creation_time: 1783768615168
+effective_trace_archival_retention: null
+experiment_id: '279912169704474871'
+last_update_time: 1783768615168
+lifecycle_stage: active
+name: recomart-recommendation
+trace_location: null
+workspace: default

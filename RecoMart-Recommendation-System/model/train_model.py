@@ -1,13 +1,17 @@
 import json
 import logging
+import os
+import pickle
 from typing import Any, Dict, List
 
+os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
+import mlflow
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import NMF
 from sklearn.metrics import mean_squared_error
 
-from project_config import FEATURES_PATH, MODEL_METADATA_PATH, MODEL_PATH, ensure_project_dirs
+from project_config import FEATURES_PATH, MODEL_METADATA_PATH, MODEL_PATH, ROOT_DIR, ensure_project_dirs
 
 
 def setup_logging() -> None:
@@ -48,12 +52,21 @@ def train_model() -> Dict[str, Any]:
         "recommendations": top_k,
     }
 
-    import pickle
-
     with MODEL_PATH.open("wb") as handle:
         pickle.dump({"nmf": nmf, "user_item_matrix": user_item_matrix, "user_factors": user_factors, "item_factors": item_factors}, handle)
 
     MODEL_METADATA_PATH.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+
+    mlflow.set_tracking_uri(f"file:///{ROOT_DIR / 'mlruns'}")
+    mlflow.set_experiment("recomart-recommendation")
+    with mlflow.start_run(run_name="recomart-nmf-run") as run:
+        mlflow.log_params(metadata["parameters"])
+        mlflow.log_metrics(metrics)
+        mlflow.log_artifact(str(MODEL_PATH))
+        mlflow.log_artifact(str(MODEL_METADATA_PATH))
+        mlflow.log_artifact(str(FEATURES_PATH))
+        metadata["mlflow_run_id"] = run.info.run_id
+
     logger.info("Model training completed")
     return metadata
 
