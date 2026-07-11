@@ -16,6 +16,16 @@ This repository contains a modular end-to-end recommendation pipeline for RecoMa
 python main.py
 ```
 
+## Public dataset option
+
+For a more widely recognized recommendation dataset, the project can also download the MovieLens 100k dataset from GroupLens:
+
+```bash
+python ingestion/download_public_dataset.py
+```
+
+This stores the downloaded files under data/raw/public/ml-100k/.
+
 ## Key outputs
 
 - Raw data partitions in data/raw/

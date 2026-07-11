@@ -12,5 +12,5 @@
     "item_avg_rating",
     "item_popularity"
   ],
-  "rows": 24
+  "rows": 100000
 }

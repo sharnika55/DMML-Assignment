@@ -13,6 +13,7 @@ from project_config import (
     ROOT_DIR,
     ensure_project_dirs,
 )
+from ingestion.load_movielens import load_movielens_dataset
 
 LOG_PATH = ROOT_DIR / "logs" / "ingestion.log"
 MANIFEST_PATH = RAW_DIR / "ingestion_manifest.json"
@@ -32,7 +33,10 @@ def write_partitioned_file(data: Any, source: str, file_name: str) -> Path:
     destination_dir.mkdir(parents=True, exist_ok=True)
     destination_path = destination_dir / file_name
     if isinstance(data, pd.DataFrame):
-        data.to_csv(destination_path, index=False)
+        if file_name.endswith(".json"):
+            data.to_json(destination_path, orient="records", indent=2)
+        else:
+            data.to_csv(destination_path, index=False)
     else:
         destination_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
     return destination_path
@@ -60,8 +64,14 @@ def run_ingestion() -> Dict[str, Any]:
     logger = logging.getLogger(__name__)
     logger.info("Starting ingestion")
 
-    interactions = load_interactions(RAW_INTERACTIONS_PATH)
-    products = load_products(RAW_PRODUCTS_PATH)
+    dataset_dir = RAW_DIR / "public" / "ml-100k" / "ml-100k"
+    if dataset_dir.exists() and (dataset_dir / "u.data").exists():
+        interactions, products = load_movielens_dataset()
+        logger.info("Using MovieLens public dataset")
+    else:
+        interactions = load_interactions(RAW_INTERACTIONS_PATH)
+        products = load_products(RAW_PRODUCTS_PATH)
+        logger.info("Using local sample dataset")
 
     interaction_path = write_partitioned_file(interactions, "ratings", "interactions.csv")
     product_path = write_partitioned_file(products, "api", "products.json")

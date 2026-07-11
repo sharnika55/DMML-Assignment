@@ -23,7 +23,7 @@ def build_report() -> None:
     story.append(Paragraph("RecoMart Recommendation System", styles["Heading1"]))
     story.append(Spacer(1, 0.15 * inch))
     story.append(Paragraph("Team Member Details: Student Group / RecoMart Data Platform Team", styles["BodyText"]))
-    story.append(Paragraph("Submission Date: 22.07.2026", styles["BodyText"]))
+    story.append(Paragraph("Submission Date: 11.07.2026", styles["BodyText"]))
     story.append(Spacer(1, 0.2 * inch))
 
     story.append(Paragraph("1. Problem Statement", styles["Heading2"]))
@@ -50,11 +50,20 @@ def build_report() -> None:
     story.append(Paragraph("- Prefect orchestrates the workflow while MLflow records parameters, metrics, and artifacts.", styles["BodyText"]))
     story.append(Spacer(1, 0.1 * inch))
 
-    model_meta = json.loads(MODEL_METADATA_PATH.read_text(encoding="utf-8"))
-    validation_report = json.loads(VALIDATION_REPORT_PATH.read_text(encoding="utf-8"))
+    try:
+        model_meta = json.loads(MODEL_METADATA_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        model_meta = None
+    try:
+        validation_report = json.loads(VALIDATION_REPORT_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        validation_report = None
 
     story.append(Paragraph("5. Results and Outputs", styles["Heading2"]))
-    metrics_data = [["Metric", "Value"], ["Model", model_meta["model"]], ["NMF Components", model_meta["parameters"]["n_components"]], ["RMSE", round(model_meta["metrics"]["rmse"], 4)], ["Precision@5", round(model_meta["metrics"]["precision_at_5"], 4)]]
+    if model_meta:
+        metrics_data = [["Metric", "Value"], ["Model", model_meta.get("model")], ["NMF Components", model_meta.get("parameters", {}).get("n_components")], ["RMSE", round(model_meta.get("metrics", {}).get("rmse", 0.0), 4)], ["Precision@5", round(model_meta.get("metrics", {}).get("precision_at_5", 0.0), 4)]]
+    else:
+        metrics_data = [["Metric", "Value"], ["Model", "N/A"], ["NMF Components", "N/A"], ["RMSE", "N/A"], ["Precision@5", "N/A"]]
     table = Table(metrics_data, colWidths=[2.2 * inch, 3.2 * inch])
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4F81BD")),
@@ -65,7 +74,27 @@ def build_report() -> None:
     story.append(table)
     story.append(Spacer(1, 0.15 * inch))
 
-    story.append(Paragraph(f"Validation summary: {validation_report['summary']['datasets_checked']} datasets checked, passed = {validation_report['summary']['passed']}", styles["BodyText"]))
+    if validation_report:
+        story.append(Paragraph(f"Validation summary: {validation_report['summary']['datasets_checked']} datasets checked, passed = {validation_report['summary']['passed']}", styles["BodyText"]))
+    else:
+        story.append(Paragraph("Validation summary: Not available", styles["BodyText"]))
+    story.append(Spacer(1, 0.15 * inch))
+
+    # Add MLflow and sample recommendations if available
+    if model_meta and model_meta.get("mlflow_run_id"):
+        story.append(Paragraph("Experiment Tracking", styles["Heading2"]))
+        story.append(Paragraph(f"MLflow run id: {model_meta.get('mlflow_run_id')}", styles["BodyText"]))
+        story.append(Paragraph(f"Local mlruns path: {ROOT / 'mlruns'}", styles["BodyText"]))
+        story.append(Spacer(1, 0.1 * inch))
+        story.append(Paragraph("Sample Recommendations (top 5 per user):", styles["Heading3"]))
+        # show up to 5 users
+        recs = model_meta.get("recommendations", [])
+        for item in recs[:5]:
+            if isinstance(item, dict):
+                uid = item.get("user_id")
+                rlist = item.get("recommendations", [])
+                story.append(Paragraph(f"- {uid}: {', '.join(rlist[:5])}", styles["BodyText"]))
+        story.append(Spacer(1, 0.15 * inch))
     story.append(Spacer(1, 0.15 * inch))
 
     story.append(Paragraph("Sample plots generated:", styles["BodyText"]))
@@ -86,7 +115,12 @@ def build_report() -> None:
     story.append(Paragraph("Google Drive Link to Deliverables ZIP: [Add link here]", styles["BodyText"]))
     story.append(Paragraph("Repository: https://github.com/sharnika55/DMML-Assignment", styles["BodyText"]))
 
-    doc.build(story)
+    try:
+        doc.build(story)
+    except PermissionError:
+        alt_path = REPORT_PATH.with_name(REPORT_PATH.stem + "_v2" + REPORT_PATH.suffix)
+        alt_doc = SimpleDocTemplate(str(alt_path), pagesize=letter, rightMargin=0.75 * inch, leftMargin=0.75 * inch, topMargin=0.75 * inch, bottomMargin=0.75 * inch)
+        alt_doc.build(story)
 
 
 if __name__ == "__main__":

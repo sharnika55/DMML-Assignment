@@ -24,6 +24,22 @@ def precision_at_k(actual: List[str], recommended: List[str], k: int = 5) -> flo
     return len(set(recommended[:k]).intersection(actual)) / min(k, len(actual))
 
 
+def to_serializable(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(key): to_serializable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [to_serializable(item) for item in value]
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.floating):
+        return float(value)
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, pd.Timestamp):
+        return value.isoformat()
+    return value
+
+
 def train_model() -> Dict[str, Any]:
     ensure_project_dirs()
     setup_logging()
@@ -41,8 +57,8 @@ def train_model() -> Dict[str, Any]:
     rmse = float(np.sqrt(mean_squared_error(matrix[matrix > 0], predictions[matrix > 0])))
     top_k = []
     for user_idx, user_id in enumerate(user_item_matrix.index):
-        recommended = [user_item_matrix.columns[idx] for idx in np.argsort(predictions[user_idx])[::-1][:5]]
-        top_k.append((user_id, recommended))
+        recommended = [str(user_item_matrix.columns[idx]) for idx in np.argsort(predictions[user_idx])[::-1][:5]]
+        top_k.append({"user_id": str(user_id), "recommendations": recommended})
 
     metrics = {"rmse": rmse, "precision_at_5": 0.0}
     metadata = {
@@ -55,7 +71,8 @@ def train_model() -> Dict[str, Any]:
     with MODEL_PATH.open("wb") as handle:
         pickle.dump({"nmf": nmf, "user_item_matrix": user_item_matrix, "user_factors": user_factors, "item_factors": item_factors}, handle)
 
-    MODEL_METADATA_PATH.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    serializable_metadata = to_serializable(metadata)
+    MODEL_METADATA_PATH.write_text(json.dumps(serializable_metadata, indent=2), encoding="utf-8")
 
     mlflow.set_tracking_uri(f"file:///{ROOT_DIR / 'mlruns'}")
     mlflow.set_experiment("recomart-recommendation")

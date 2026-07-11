@@ -7,7 +7,7 @@
     {
       "dataset": "interactions",
       "metrics": {
-        "rows": 24,
+        "rows": 100000,
         "columns": [
           "user_id",
           "product_id",
@@ -25,7 +25,7 @@
     {
       "dataset": "products",
       "metrics": {
-        "rows": 10,
+        "rows": 1682,
         "columns": [
           "product_id",
           "name",
