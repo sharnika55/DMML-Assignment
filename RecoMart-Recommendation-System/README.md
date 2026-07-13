@@ -34,3 +34,20 @@ This stores the downloaded files under data/raw/public/ml-100k/.
 - Model artifacts in data/models/
 - Logs in logs/
 - Reports in reports/
+
+## Local Airflow & MLflow (quick start)
+
+Start a local Airflow UI and MLflow server using Docker Compose (this uses `airflow standalone` for simplicity):
+
+```bash
+cd RecoMart-Recommendation-System
+docker-compose up --build
+```
+
+- Airflow UI: http://localhost:8080 — open the `recomart_end_to_end` DAG to see per-task status and XComs.
+- MLflow UI: http://localhost:5000 — view experiments and logged artifacts.
+
+Notes:
+- The DAG file is located at `dags/recomart_dag.py` and invokes the repository's ingestion/validation/prepare/feature/train modules.
+- The ingestion task returns a manifest path and file list to XCom so you can inspect which datasets were used for that run.
+

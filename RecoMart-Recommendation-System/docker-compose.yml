@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  airflow:
+    image: apache/airflow:2.7.1
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    command: airflow standalone
+    volumes:
+      - ./:/opt/airflow/dags:rw
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  mlflow:
+    image: python:3.10-slim
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+      - mlruns:/workspace/mlruns
+    command: bash -c "pip install mlflow && mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /workspace/mlruns --host 0.0.0.0 --port 5000"
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+volumes:
+  mlruns:

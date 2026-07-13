@@ -5,3 +5,4 @@ matplotlib
 reportlab
 prefect
 mlflow
+apache-airflow==2.7.1
