@@ -76,7 +76,14 @@ def train_model() -> Dict[str, Any]:
 
     mlflow.set_tracking_uri(f"file:///{ROOT_DIR / 'mlruns'}")
     mlflow.set_experiment("recomart-recommendation")
+    mlflow.end_run()
     with mlflow.start_run(run_name="recomart-nmf-run") as run:
+     
+        metadata["mlflow_run_id"] = run.info.run_id
+
+        MODEL_METADATA_PATH.write_text(
+        json.dumps(to_serializable(metadata), indent=2),
+        encoding="utf-8")
         mlflow.log_params(metadata["parameters"])
         mlflow.log_metrics(metrics)
         mlflow.log_artifact(str(MODEL_PATH))

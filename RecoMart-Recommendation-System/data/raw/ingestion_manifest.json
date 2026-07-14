@@ -1,13 +1,13 @@
 {
-  "ingested_at": "2026-07-13T12:59:47.934219",
+  "ingested_at": "2026-07-14T17:54:18.903883",
   "files": [
     {
       "source": "ratings",
-      "path": "data\\raw\\ratings\\2026\\07\\13\\interactions.csv"
+      "path": "data\\raw\\ratings\\2026\\07\\14\\interactions.csv"
     },
     {
       "source": "api",
-      "path": "data\\raw\\api\\2026\\07\\13\\products.json"
+      "path": "data\\raw\\api\\2026\\07\\14\\products.json"
     }
   ]
 }

@@ -1,0 +1,13 @@
+# Visual Studio
+.vs/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# MLflow
+mlruns/
+
+# Logs
+*.log

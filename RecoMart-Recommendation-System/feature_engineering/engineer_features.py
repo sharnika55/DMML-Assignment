@@ -27,7 +27,7 @@ def engineer_features() -> Dict[str, Any]:
     feature_frame = feature_frame.merge(user_rating_avg, on="user_id", how="left")
     feature_frame = feature_frame.merge(item_rating_avg, on="product_id", how="left")
     feature_frame = feature_frame.merge(item_popularity, on="product_id", how="left")
-
+    FEATURES_PATH.parent.mkdir(parents=True, exist_ok=True)
     feature_frame.to_csv(FEATURES_PATH, index=False)
     logger.info("Feature engineering completed")
     return {"feature_rows": int(len(feature_frame)), "path": str(FEATURES_PATH)}
