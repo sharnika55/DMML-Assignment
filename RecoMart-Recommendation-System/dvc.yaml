@@ -1,6 +1,6 @@
 stages:
   ingest:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m ingestion.ingest_data'
+    cmd: python -m ingestion.ingest_data
     deps:
       - ingestion/ingest_data.py
       - ingestion/load_movielens.py
@@ -10,7 +10,7 @@ stages:
       - data/raw/api
       - data/raw/ingestion_manifest.json
   validate:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m validation.validate_data'
+    cmd: python -m validation.validate_data
     deps:
       - validation/validate_data.py
       - project_config.py
@@ -21,7 +21,7 @@ stages:
       - reports/data_quality_report.pdf
       - reports/validation_report.json
   prepare:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m preprocessing.prepare_data'
+    cmd: python -m preprocessing.prepare_data
     deps:
       - preprocessing/prepare_data.py
       - project_config.py
@@ -33,7 +33,7 @@ stages:
       - reports/plots/rating_distribution.png
       - reports/plots/feature_correlation.png
   features:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m feature_engineering.engineer_features'
+    cmd: python -m feature_engineering.engineer_features
     deps:
       - feature_engineering/engineer_features.py
       - project_config.py
@@ -41,7 +41,7 @@ stages:
     outs:
       - data/features/feature_table.csv
   feature_store:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m feature_store.feature_store'
+    cmd: python -m feature_store.feature_store
     deps:
       - feature_store/feature_store.py
       - project_config.py
@@ -50,7 +50,7 @@ stages:
       - data/features/feature_store_metadata.json
       - data/features/versions
   train:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m model.train_model'
+    cmd: python -m model.train_model
     deps:
       - model/train_model.py
       - project_config.py

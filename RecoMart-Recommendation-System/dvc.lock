@@ -1,8 +1,7 @@
 schema: '2.0'
 stages:
   ingest:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m ingestion.ingest_data'
+    cmd: python -m ingestion.ingest_data
     deps:
     - path: ingestion/ingest_data.py
       hash: md5
@@ -24,7 +23,7 @@ stages:
       nfiles: 2
     - path: data/raw/ingestion_manifest.json
       hash: md5
-      md5: 1148da13ad73a4361305343828ec7437
+      md5: 47740cc7d9e2116821005e30555405d9
       size: 287
     - path: data/raw/ratings
       hash: md5
@@ -32,8 +31,7 @@ stages:
       size: 8933998
       nfiles: 2
   validate:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m validation.validate_data'
+    cmd: python -m validation.validate_data
     deps:
     - path: data/raw/api
       hash: md5
@@ -42,7 +40,7 @@ stages:
       nfiles: 2
     - path: data/raw/ingestion_manifest.json
       hash: md5
-      md5: 1148da13ad73a4361305343828ec7437
+      md5: 47740cc7d9e2116821005e30555405d9
       size: 287
     - path: data/raw/ratings
       hash: md5
@@ -60,15 +58,14 @@ stages:
     outs:
     - path: reports/data_quality_report.pdf
       hash: md5
-      md5: 6d1436c533c5a4a0cc40cdde8aa6cb46
+      md5: 5c5ce7f846fce212809348037131af09
       size: 2076
     - path: reports/validation_report.json
       hash: md5
       md5: 65a92b5ce75d625a1a788396664a3e20
       size: 935
   prepare:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m preprocessing.prepare_data'
+    cmd: python -m preprocessing.prepare_data
     deps:
     - path: data/raw/api
       hash: md5
@@ -77,7 +74,7 @@ stages:
       nfiles: 2
     - path: data/raw/ingestion_manifest.json
       hash: md5
-      md5: 1148da13ad73a4361305343828ec7437
+      md5: 47740cc7d9e2116821005e30555405d9
       size: 287
     - path: data/raw/ratings
       hash: md5
@@ -106,8 +103,7 @@ stages:
       md5: 7a8d9ed958b10e9354e8826ef1c9c639
       size: 14052
   features:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m feature_engineering.engineer_features'
+    cmd: python -m feature_engineering.engineer_features
     deps:
     - path: data/processed/prepared_interactions.csv
       hash: md5
@@ -127,8 +123,7 @@ stages:
       md5: 1d7b0dcfabd30b21c3901a9ee5f1cb48
       size: 5959320
   feature_store:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m feature_store.feature_store'
+    cmd: python -m feature_store.feature_store
     deps:
     - path: data/features/feature_table.csv
       hash: md5
@@ -145,16 +140,15 @@ stages:
     outs:
     - path: data/features/feature_store_metadata.json
       hash: md5
-      md5: cfe69f6e9a28fdbc9a12358a2f5515ea
+      md5: 2d161ae8512ebff98e5f1ab88f0b8d29
       size: 710
     - path: data/features/versions
       hash: md5
-      md5: 8faed483203af672c5466401bddc5721.dir
+      md5: b08688c14d3199b42faf1707f7b0d992.dir
       size: 5927063
       nfiles: 1
   train:
-    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
-      -m model.train_model'
+    cmd: python -m model.train_model
     deps:
     - path: data/features/feature_table.csv
       hash: md5
