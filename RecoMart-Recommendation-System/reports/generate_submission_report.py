@@ -47,7 +47,7 @@ def build_report() -> None:
     story.append(Spacer(1, 0.1 * inch))
 
     story.append(Paragraph("4. Implementation Details", styles["Heading2"]))
-    story.append(Paragraph("- Ingestion scripts read local CSV and JSON data into a structured raw-data lake layout.", styles["BodyText"]))
+    story.append(Paragraph("- Ingestion scripts download and process the MovieLens 100k public dataset and write timestamp-partitioned raw data plus ingestion manifest lineage.", styles["BodyText"]))
     story.append(Paragraph("- Validation checks verify missing values, duplicate rows, and rating ranges.", styles["BodyText"]))
     story.append(Paragraph("- Preparation joins product metadata with interaction data, encodes categories, and normalizes attributes.", styles["BodyText"]))
     story.append(Paragraph("- Feature engineering creates user activity frequency, average ratings, and popularity-based features.", styles["BodyText"]))
@@ -65,9 +65,9 @@ def build_report() -> None:
 
     story.append(Paragraph("5. Results and Outputs", styles["Heading2"]))
     if model_meta:
-        metrics_data = [["Metric", "Value"], ["Model", model_meta.get("model")], ["NMF Components", model_meta.get("parameters", {}).get("n_components")], ["RMSE", round(model_meta.get("metrics", {}).get("rmse", 0.0), 4)], ["Precision@5", round(model_meta.get("metrics", {}).get("precision_at_5", 0.0), 4)]]
+        metrics_data = [["Metric", "Value"], ["Model", model_meta.get("model")], ["NMF Components", model_meta.get("parameters", {}).get("n_components")], ["RMSE", round(model_meta.get("metrics", {}).get("rmse", 0.0), 4)], ["Precision@5", round(model_meta.get("metrics", {}).get("precision_at_5", 0.0), 4)], ["Recall@5", round(model_meta.get("metrics", {}).get("recall_at_5", 0.0), 4)], ["NDCG@5", round(model_meta.get("metrics", {}).get("ndcg_at_5", 0.0), 4)]]
     else:
-        metrics_data = [["Metric", "Value"], ["Model", "N/A"], ["NMF Components", "N/A"], ["RMSE", "N/A"], ["Precision@5", "N/A"]]
+        metrics_data = [["Metric", "Value"], ["Model", "N/A"], ["NMF Components", "N/A"], ["RMSE", "N/A"], ["Precision@5", "N/A"], ["Recall@5", "N/A"], ["NDCG@5", "N/A"]]
     table = Table(metrics_data, colWidths=[2.2 * inch, 3.2 * inch])
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4F81BD")),

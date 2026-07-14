@@ -2,7 +2,7 @@
 
 This repository contains a modular end-to-end recommendation pipeline for RecoMart. It includes:
 
-- data ingestion from local CSV and JSON sources
+- data ingestion from the MovieLens 100k public dataset (with local fallback)
 - validation with automated quality checks and PDF reporting
 - preprocessing and EDA plot generation
 - feature engineering for collaborative-style recommendations
@@ -10,13 +10,77 @@ This repository contains a modular end-to-end recommendation pipeline for RecoMa
 - model training using NMF and experiment metadata
 - an orchestration entry point for the full pipeline
 
-## Run the pipeline
+## 1) Python environment setup
+
+From project root:
+
+```bash
+python -m venv .venv
+```
+
+Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install pytest dvc
+```
+
+## 2) Download public dataset (required)
+
+```bash
+python -m ingestion.download_public_dataset
+```
+
+Expected dataset location:
+- `data/raw/public/ml-100k/ml-100k/u.data`
+- `data/raw/public/ml-100k/ml-100k/u.item`
+
+## 3) Run the full pipeline
 
 ```bash
 python -m orchestration.pipeline
 ```
 
-## Inference interface
+## 4) Validate outputs
+
+Check logs:
+- `logs/ingestion.log`
+- `logs/pipeline.log`
+
+Check data artifacts:
+- `data/raw/ingestion_manifest.json` (latest partition paths)
+- `data/processed/prepared_interactions.csv`
+- `data/features/feature_table.csv`
+- `data/features/feature_store_metadata.json`
+- `data/models/model_metadata.json`
+- `data/models/recommendation_model.pkl`
+
+Check reports:
+- `reports/validation_report.json`
+- `reports/data_quality_report.pdf`
+- `reports/plots/rating_distribution.png`
+- `reports/plots/feature_correlation.png`
+
+Run tests:
+
+```bash
+python -m pytest -q
+```
+
+Validate DVC stage reproducibility:
+
+```bash
+python -m dvc repro
+```
+
+## 5) Inference interface
 
 After training, run batch inference for a user via:
 
@@ -25,16 +89,6 @@ python -m model.inference --user-id 1 --k 5
 ```
 
 This returns top-k recommended product ids in JSON format.
-
-## Public dataset option
-
-For a more widely recognized recommendation dataset, the project can also download the MovieLens 100k dataset from GroupLens:
-
-```bash
-python ingestion/download_public_dataset.py
-```
-
-This stores the downloaded files under data/raw/public/ml-100k/.
 
 ## Key outputs
 
