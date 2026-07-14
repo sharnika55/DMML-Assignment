@@ -24,6 +24,24 @@ def precision_at_k(actual: List[str], recommended: List[str], k: int = 5) -> flo
     return len(set(recommended[:k]).intersection(actual)) / min(k, len(actual))
 
 
+def recall_at_k(actual: List[str], recommended: List[str], k: int = 5) -> float:
+    if not actual:
+        return 0.0
+    return len(set(recommended[:k]).intersection(actual)) / len(actual)
+
+
+def ndcg_at_k(actual: List[str], recommended: List[str], k: int = 5) -> float:
+    if not actual:
+        return 0.0
+    gains = [1.0 if item in set(actual) else 0.0 for item in recommended[:k]]
+    dcg = sum(gain / np.log2(idx + 2) for idx, gain in enumerate(gains))
+    ideal_gains = [1.0] * min(len(actual), k)
+    idcg = sum(gain / np.log2(idx + 2) for idx, gain in enumerate(ideal_gains))
+    if idcg == 0:
+        return 0.0
+    return float(dcg / idcg)
+
+
 def to_serializable(value: Any) -> Any:
     if isinstance(value, dict):
         return {str(key): to_serializable(item) for key, item in value.items()}
@@ -56,11 +74,27 @@ def train_model() -> Dict[str, Any]:
 
     rmse = float(np.sqrt(mean_squared_error(matrix[matrix > 0], predictions[matrix > 0])))
     top_k = []
+    precision_scores: List[float] = []
+    recall_scores: List[float] = []
+    ndcg_scores: List[float] = []
     for user_idx, user_id in enumerate(user_item_matrix.index):
         recommended = [str(user_item_matrix.columns[idx]) for idx in np.argsort(predictions[user_idx])[::-1][:5]]
+        relevant = [
+            str(product_id)
+            for product_id, rating in user_item_matrix.loc[user_id].items()
+            if float(rating) >= 4.0
+        ]
+        precision_scores.append(precision_at_k(relevant, recommended, k=5))
+        recall_scores.append(recall_at_k(relevant, recommended, k=5))
+        ndcg_scores.append(ndcg_at_k(relevant, recommended, k=5))
         top_k.append({"user_id": str(user_id), "recommendations": recommended})
 
-    metrics = {"rmse": rmse, "precision_at_5": 0.0}
+    metrics = {
+        "rmse": rmse,
+        "precision_at_5": float(np.mean(precision_scores)) if precision_scores else 0.0,
+        "recall_at_5": float(np.mean(recall_scores)) if recall_scores else 0.0,
+        "ndcg_at_5": float(np.mean(ndcg_scores)) if ndcg_scores else 0.0,
+    }
     metadata = {
         "model": "NMF",
         "parameters": {"n_components": 3, "random_state": 42},

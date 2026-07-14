@@ -8,7 +8,7 @@
 2. Show the repository structure and explain the modular pipeline.
 3. Run the pipeline locally using:
    ```bash
-   python main.py
+   python -m orchestration.pipeline
    ```
 4. Highlight the key outputs:
    - raw data in data/raw/

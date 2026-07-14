@@ -11,6 +11,8 @@ def test_validate_interactions_accepts_valid_data():
             "product_id": ["P001", "P002"],
             "rating": [5, 4],
             "event_timestamp": ["2026-07-01 10:21:00", "2026-07-02 10:21:00"],
+            "purchase_flag": [1, 0],
+            "session_id": ["U001-session", "U002-session"],
         }
     )
     report = validate_interactions(df)

@@ -13,8 +13,18 @@ This repository contains a modular end-to-end recommendation pipeline for RecoMa
 ## Run the pipeline
 
 ```bash
-python main.py
+python -m orchestration.pipeline
 ```
+
+## Inference interface
+
+After training, run batch inference for a user via:
+
+```bash
+python -m model.inference --user-id 1 --k 5
+```
+
+This returns top-k recommended product ids in JSON format.
 
 ## Public dataset option
 

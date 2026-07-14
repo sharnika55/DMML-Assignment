@@ -35,38 +35,66 @@ def load_latest_raw_files() -> Tuple[pd.DataFrame, pd.DataFrame]:
 
 def validate_interactions(df: pd.DataFrame) -> Dict[str, Any]:
     issues: List[str] = []
+    required_columns = {
+        "user_id",
+        "product_id",
+        "rating",
+        "event_timestamp",
+        "purchase_flag",
+        "session_id",
+    }
+    missing_columns = sorted(required_columns - set(df.columns))
+    if missing_columns:
+        issues.append(f"Schema mismatch - missing interaction columns: {', '.join(missing_columns)}")
+
+    parsed_timestamp = pd.to_datetime(df.get("event_timestamp"), errors="coerce")
     metrics = {
         "rows": int(len(df)),
         "columns": list(df.columns),
         "missing_values": int(df.isna().sum().sum()),
         "duplicate_rows": int(df.duplicated().sum()),
+        "invalid_timestamps": int(parsed_timestamp.isna().sum()) if "event_timestamp" in df.columns else int(len(df)),
     }
-    if df["rating"].between(1, 5).all():
+
+    if "rating" in df.columns and pd.to_numeric(df["rating"], errors="coerce").between(1, 5).all():
         metrics["rating_range_ok"] = True
     else:
         issues.append("Ratings outside allowed range 1-5")
         metrics["rating_range_ok"] = False
-    if df["user_id"].isna().any():
+    if "user_id" in df.columns and df["user_id"].isna().any():
         issues.append("Missing user_id values")
-    if df["product_id"].isna().any():
+    if "product_id" in df.columns and df["product_id"].isna().any():
         issues.append("Missing product_id values")
-    if df["event_timestamp"].isna().any():
+    if "event_timestamp" in df.columns and parsed_timestamp.isna().any():
         issues.append("Missing event_timestamp values")
     return {"dataset": "interactions", "metrics": metrics, "issues": issues}
 
 
 def validate_products(df: pd.DataFrame) -> Dict[str, Any]:
     issues: List[str] = []
+    required_columns = {"product_id", "name", "category", "price", "popularity_score"}
+    missing_columns = sorted(required_columns - set(df.columns))
+    if missing_columns:
+        issues.append(f"Schema mismatch - missing product columns: {', '.join(missing_columns)}")
+
+    price_numeric = pd.to_numeric(df.get("price"), errors="coerce") if "price" in df.columns else pd.Series(dtype=float)
+    popularity_numeric = pd.to_numeric(df.get("popularity_score"), errors="coerce") if "popularity_score" in df.columns else pd.Series(dtype=float)
     metrics = {
         "rows": int(len(df)),
         "columns": list(df.columns),
         "missing_values": int(df.isna().sum().sum()),
         "duplicate_rows": int(df.duplicated().sum()),
+        "invalid_price_values": int(price_numeric.isna().sum()) if "price" in df.columns else int(len(df)),
+        "invalid_popularity_values": int(popularity_numeric.isna().sum()) if "popularity_score" in df.columns else int(len(df)),
     }
-    if df["product_id"].isna().any():
+    if "product_id" in df.columns and df["product_id"].isna().any():
         issues.append("Missing product_id values")
-    if df["category"].isna().any():
+    if "category" in df.columns and df["category"].isna().any():
         issues.append("Missing category values")
+    if "price" in df.columns and price_numeric.isna().any():
+        issues.append("Invalid price values")
+    if "popularity_score" in df.columns and popularity_numeric.isna().any():
+        issues.append("Invalid popularity_score values")
     return {"dataset": "products", "metrics": metrics, "issues": issues}
 
 

@@ -1,30 +1,59 @@
 stages:
   ingest:
-    cmd: python ingestion/ingest_data.py
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m ingestion.ingest_data'
     deps:
-      - data/raw/ratings/interactions.csv
-      - data/raw/api/products_api.json
+      - ingestion/ingest_data.py
+      - ingestion/load_movielens.py
+      - project_config.py
     outs:
       - data/raw/ratings
       - data/raw/api
+      - data/raw/ingestion_manifest.json
   validate:
-    cmd: python validation/validate_data.py
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m validation.validate_data'
     deps:
+      - validation/validate_data.py
+      - project_config.py
+      - data/raw/ingestion_manifest.json
       - data/raw/ratings
       - data/raw/api
     outs:
       - reports/data_quality_report.pdf
+      - reports/validation_report.json
   prepare:
-    cmd: python preprocessing/prepare_data.py
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m preprocessing.prepare_data'
     deps:
+      - preprocessing/prepare_data.py
+      - project_config.py
+      - data/raw/ingestion_manifest.json
       - data/raw/ratings
       - data/raw/api
     outs:
       - data/processed/prepared_interactions.csv
-  train:
-    cmd: python model/train_model.py
+      - reports/plots/rating_distribution.png
+      - reports/plots/feature_correlation.png
+  features:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m feature_engineering.engineer_features'
     deps:
+      - feature_engineering/engineer_features.py
+      - project_config.py
       - data/processed/prepared_interactions.csv
+    outs:
+      - data/features/feature_table.csv
+  feature_store:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m feature_store.feature_store'
+    deps:
+      - feature_store/feature_store.py
+      - project_config.py
+      - data/features/feature_table.csv
+    outs:
+      - data/features/feature_store_metadata.json
+      - data/features/versions
+  train:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe" -m model.train_model'
+    deps:
+      - model/train_model.py
+      - project_config.py
       - data/features/feature_table.csv
     outs:
       - data/models/recommendation_model.pkl

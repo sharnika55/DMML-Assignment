@@ -12,6 +12,8 @@ from project_config import RAW_DIR, RAW_INTERACTIONS_PATH, RAW_PRODUCTS_PATH, en
 
 def load_movielens_dataset() -> tuple[pd.DataFrame, pd.DataFrame]:
     ensure_project_dirs()
+    RAW_INTERACTIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    RAW_PRODUCTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     dataset_dir = RAW_DIR / "public" / "ml-100k" / "ml-100k"
     ratings_path = dataset_dir / "u.data"
     items_path = dataset_dir / "u.item"

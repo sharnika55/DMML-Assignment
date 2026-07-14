@@ -1,4 +1,6 @@
 import json
+import os
+from datetime import date
 from pathlib import Path
 
 from reportlab.lib import colors
@@ -12,6 +14,8 @@ REPORT_PATH = ROOT / "reports" / "RecoMart_Assignment_Report.pdf"
 PLOTS_DIR = ROOT / "reports" / "plots"
 MODEL_METADATA_PATH = ROOT / "data" / "models" / "model_metadata.json"
 VALIDATION_REPORT_PATH = ROOT / "reports" / "validation_report.json"
+VIDEO_LINK = os.getenv("RECOMART_VIDEO_LINK", "Not provided")
+ZIP_LINK = os.getenv("RECOMART_ZIP_LINK", "Not provided")
 
 
 def build_report() -> None:
@@ -23,7 +27,7 @@ def build_report() -> None:
     story.append(Paragraph("RecoMart Recommendation System", styles["Heading1"]))
     story.append(Spacer(1, 0.15 * inch))
     story.append(Paragraph("Team Member Details: Student Group / RecoMart Data Platform Team", styles["BodyText"]))
-    story.append(Paragraph("Submission Date: 11.07.2026", styles["BodyText"]))
+    story.append(Paragraph(f"Submission Date: {date.today().strftime('%d.%m.%Y')}", styles["BodyText"]))
     story.append(Spacer(1, 0.2 * inch))
 
     story.append(Paragraph("1. Problem Statement", styles["Heading2"]))
@@ -111,8 +115,8 @@ def build_report() -> None:
     story.append(Spacer(1, 0.1 * inch))
 
     story.append(Paragraph("7. Submission Links", styles["Heading2"]))
-    story.append(Paragraph("Google Drive Link to Video Walkthrough: [Add link here]", styles["BodyText"]))
-    story.append(Paragraph("Google Drive Link to Deliverables ZIP: [Add link here]", styles["BodyText"]))
+    story.append(Paragraph(f"Google Drive Link to Video Walkthrough: {VIDEO_LINK}", styles["BodyText"]))
+    story.append(Paragraph(f"Google Drive Link to Deliverables ZIP: {ZIP_LINK}", styles["BodyText"]))
     story.append(Paragraph("Repository: https://github.com/sharnika55/DMML-Assignment", styles["BodyText"]))
 
     try:

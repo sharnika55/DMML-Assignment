@@ -1,0 +1,179 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m ingestion.ingest_data'
+    deps:
+    - path: ingestion/ingest_data.py
+      hash: md5
+      md5: a6fbe5f530e0647ec92359933ad36303
+      size: 3719
+    - path: ingestion/load_movielens.py
+      hash: md5
+      md5: 12f25b5fda907e774d2a201b2da5d27c
+      size: 2134
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    outs:
+    - path: data/raw/api
+      hash: md5
+      md5: 588b317926a029cd2e9864719419393f.dir
+      size: 477156
+      nfiles: 2
+    - path: data/raw/ingestion_manifest.json
+      hash: md5
+      md5: 1148da13ad73a4361305343828ec7437
+      size: 287
+    - path: data/raw/ratings
+      hash: md5
+      md5: d110262e5a34a8f56767eff356674e44.dir
+      size: 8933998
+      nfiles: 2
+  validate:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m validation.validate_data'
+    deps:
+    - path: data/raw/api
+      hash: md5
+      md5: 588b317926a029cd2e9864719419393f.dir
+      size: 477156
+      nfiles: 2
+    - path: data/raw/ingestion_manifest.json
+      hash: md5
+      md5: 1148da13ad73a4361305343828ec7437
+      size: 287
+    - path: data/raw/ratings
+      hash: md5
+      md5: d110262e5a34a8f56767eff356674e44.dir
+      size: 8933998
+      nfiles: 2
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    - path: validation/validate_data.py
+      hash: md5
+      md5: 03ec8b53780d0218a2d75b573744e80f
+      size: 6440
+    outs:
+    - path: reports/data_quality_report.pdf
+      hash: md5
+      md5: 6d1436c533c5a4a0cc40cdde8aa6cb46
+      size: 2076
+    - path: reports/validation_report.json
+      hash: md5
+      md5: 65a92b5ce75d625a1a788396664a3e20
+      size: 935
+  prepare:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m preprocessing.prepare_data'
+    deps:
+    - path: data/raw/api
+      hash: md5
+      md5: 588b317926a029cd2e9864719419393f.dir
+      size: 477156
+      nfiles: 2
+    - path: data/raw/ingestion_manifest.json
+      hash: md5
+      md5: 1148da13ad73a4361305343828ec7437
+      size: 287
+    - path: data/raw/ratings
+      hash: md5
+      md5: d110262e5a34a8f56767eff356674e44.dir
+      size: 8933998
+      nfiles: 2
+    - path: preprocessing/prepare_data.py
+      hash: md5
+      md5: 4727145ce7f44df744e67e77e41d5dc2
+      size: 2622
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    outs:
+    - path: data/processed/prepared_interactions.csv
+      hash: md5
+      md5: c39858f957962b8643e81998f78617f3
+      size: 9292418
+    - path: reports/plots/feature_correlation.png
+      hash: md5
+      md5: abb65a361c2e09e030e2f501d8682b91
+      size: 28716
+    - path: reports/plots/rating_distribution.png
+      hash: md5
+      md5: 7a8d9ed958b10e9354e8826ef1c9c639
+      size: 14052
+  features:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m feature_engineering.engineer_features'
+    deps:
+    - path: data/processed/prepared_interactions.csv
+      hash: md5
+      md5: c39858f957962b8643e81998f78617f3
+      size: 9292418
+    - path: feature_engineering/engineer_features.py
+      hash: md5
+      md5: a0d5eead0ff9757fb2a182e90939e55c
+      size: 1575
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    outs:
+    - path: data/features/feature_table.csv
+      hash: md5
+      md5: 1d7b0dcfabd30b21c3901a9ee5f1cb48
+      size: 5959320
+  feature_store:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m feature_store.feature_store'
+    deps:
+    - path: data/features/feature_table.csv
+      hash: md5
+      md5: 3b69b3bcf731f05f591b2271ecd9b189
+      size: 5927063
+    - path: feature_store/feature_store.py
+      hash: md5
+      md5: 8731f8cb9fddc1c25de5e5b42fb5e827
+      size: 3572
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    outs:
+    - path: data/features/feature_store_metadata.json
+      hash: md5
+      md5: cfe69f6e9a28fdbc9a12358a2f5515ea
+      size: 710
+    - path: data/features/versions
+      hash: md5
+      md5: 8faed483203af672c5466401bddc5721.dir
+      size: 5927063
+      nfiles: 1
+  train:
+    cmd: '"c:/Users/sharnika kotrike/DMML-Assignment/RecoMart-Recommendation-System/.venv/Scripts/python.exe"
+      -m model.train_model'
+    deps:
+    - path: data/features/feature_table.csv
+      hash: md5
+      md5: 3b69b3bcf731f05f591b2271ecd9b189
+      size: 5927063
+    - path: model/train_model.py
+      hash: md5
+      md5: 57fcf9e5cb309944bdef8faa6bff52f8
+      size: 4832
+    - path: project_config.py
+      hash: md5
+      md5: 642ed6147e95612c1a6db269e1217611
+      size: 1359
+    outs:
+    - path: data/models/model_metadata.json
+      hash: md5
+      md5: 77a4009132071d1d2efffef5bd4a6450
+      size: 146398
+    - path: data/models/recommendation_model.pkl
+      hash: md5
+      md5: 007b5232c09228a4a6cc47588b8dc6d5
+      size: 12814577

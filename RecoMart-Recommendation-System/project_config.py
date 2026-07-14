@@ -5,6 +5,7 @@ DATA_DIR = ROOT_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 FEATURES_DIR = DATA_DIR / "features"
+FEATURE_STORE_VERSIONS_DIR = FEATURES_DIR / "versions"
 MODELS_DIR = DATA_DIR / "models"
 LOGS_DIR = ROOT_DIR / "logs"
 REPORTS_DIR = ROOT_DIR / "reports"
@@ -28,6 +29,7 @@ def ensure_project_dirs() -> None:
         RAW_DIR,
         PROCESSED_DIR,
         FEATURES_DIR,
+        FEATURE_STORE_VERSIONS_DIR,
         MODELS_DIR,
         LOGS_DIR,
         REPORTS_DIR,

@@ -1,6 +1,7 @@
 import json
 import logging
-from datetime import datetime
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -19,6 +20,18 @@ LOG_PATH = ROOT_DIR / "logs" / "ingestion.log"
 MANIFEST_PATH = RAW_DIR / "ingestion_manifest.json"
 
 
+def execute_with_retry(func: Any, *args: Any, retries: int = 3, backoff_seconds: int = 2, **kwargs: Any) -> Any:
+    logger = logging.getLogger(__name__)
+    for attempt in range(1, retries + 1):
+        try:
+            return func(*args, **kwargs)
+        except Exception as exc:
+            logger.warning("Attempt %s/%s for %s failed: %s", attempt, retries, func.__name__, exc)
+            if attempt == retries:
+                raise
+            time.sleep(backoff_seconds * attempt)
+
+
 def setup_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
@@ -28,7 +41,7 @@ def setup_logging() -> None:
 
 
 def write_partitioned_file(data: Any, source: str, file_name: str) -> Path:
-    date_prefix = datetime.utcnow().strftime("%Y/%m/%d")
+    date_prefix = datetime.now(timezone.utc).strftime("%Y/%m/%d")
     destination_dir = RAW_DIR / source / date_prefix
     destination_dir.mkdir(parents=True, exist_ok=True)
     destination_path = destination_dir / file_name
@@ -52,7 +65,7 @@ def load_products(source_path: Path) -> List[Dict[str, Any]]:
 
 
 def build_manifest(paths: List[Tuple[str, Path]]) -> Dict[str, Any]:
-    manifest: Dict[str, Any] = {"ingested_at": datetime.utcnow().isoformat(), "files": []}
+    manifest: Dict[str, Any] = {"ingested_at": datetime.now(timezone.utc).isoformat(), "files": []}
     for source, path in paths:
         manifest["files"].append({"source": source, "path": str(path.relative_to(ROOT_DIR))})
     return manifest
@@ -66,18 +79,18 @@ def run_ingestion() -> Dict[str, Any]:
 
     dataset_dir = RAW_DIR / "public" / "ml-100k" / "ml-100k"
     if dataset_dir.exists() and (dataset_dir / "u.data").exists():
-        interactions, products = load_movielens_dataset()
+        interactions, products = execute_with_retry(load_movielens_dataset)
         logger.info("Using MovieLens public dataset")
     else:
-        interactions = load_interactions(RAW_INTERACTIONS_PATH)
-        products = load_products(RAW_PRODUCTS_PATH)
+        interactions = execute_with_retry(load_interactions, RAW_INTERACTIONS_PATH)
+        products = execute_with_retry(load_products, RAW_PRODUCTS_PATH)
         logger.info("Using local sample dataset")
 
-    interaction_path = write_partitioned_file(interactions, "ratings", "interactions.csv")
-    product_path = write_partitioned_file(products, "api", "products.json")
+    interaction_path = execute_with_retry(write_partitioned_file, interactions, "ratings", "interactions.csv")
+    product_path = execute_with_retry(write_partitioned_file, products, "api", "products.json")
 
     manifest = build_manifest([("ratings", interaction_path), ("api", product_path)])
-    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    execute_with_retry(MANIFEST_PATH.write_text, json.dumps(manifest, indent=2), encoding="utf-8")
     logger.info("Ingestion completed successfully")
     return {"interactions": interaction_path, "products": product_path, "manifest": MANIFEST_PATH}
 
