@@ -1,6 +1,7 @@
 import logging
+import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,6 +10,7 @@ from project_config import (
     EDA_PLOTS_DIR,
     PROCESSED_INTERACTIONS_PATH,
     RAW_DIR,
+    ROOT_DIR,
     ensure_project_dirs,
 )
 
@@ -17,10 +19,14 @@ def setup_logging() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 
-def load_latest_data() -> pd.DataFrame:
+def load_latest_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     manifest_path = RAW_DIR / "ingestion_manifest.json"
-    manifest = pd.read_json(manifest_path)
-    return pd.read_csv(RAW_DIR / "ratings" / "2026" / "07" / "11" / "interactions.csv")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    interactions_path = ROOT_DIR / manifest["files"][0]["path"]
+    products_path = ROOT_DIR / manifest["files"][1]["path"]
+    interactions = pd.read_csv(interactions_path)
+    products = pd.read_json(products_path)
+    return interactions, products
 
 
 def prepare_data() -> Dict[str, Any]:
@@ -29,8 +35,7 @@ def prepare_data() -> Dict[str, Any]:
     logger = logging.getLogger(__name__)
     logger.info("Preparing data")
 
-    interactions = pd.read_csv(RAW_DIR / "ratings" / "2026" / "07" / "11" / "interactions.csv")
-    products = pd.read_json(RAW_DIR / "api" / "2026" / "07" / "11" / "products.json")
+    interactions, products = load_latest_data()
 
     merged = interactions.merge(products, on="product_id", how="left")
     merged["event_timestamp"] = pd.to_datetime(merged["event_timestamp"], errors="coerce")
