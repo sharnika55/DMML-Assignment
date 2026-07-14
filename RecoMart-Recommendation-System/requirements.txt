@@ -3,6 +3,7 @@ numpy
 scikit-learn
 matplotlib
 reportlab
-prefect
 mlflow
-apache-airflow==2.7.1
+dvc
+pytest
+apache-airflow==2.7.1; python_version >= "3.8" and python_version < "3.12"

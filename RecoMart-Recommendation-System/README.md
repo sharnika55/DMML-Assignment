@@ -12,6 +12,10 @@ This repository contains a modular end-to-end recommendation pipeline for RecoMa
 
 ## 1) Python environment setup
 
+Recommended Python versions:
+- `3.10` or `3.11` for full local stack (including Airflow package import)
+- `3.12+` can run core pipeline, tests, DVC, and MLflow parts, but Airflow should be run via Docker Compose
+
 From project root:
 
 ```bash
@@ -29,8 +33,11 @@ Install dependencies:
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python -m pip install pytest dvc
 ```
+
+Notes:
+- `requirements.txt` installs Airflow only on supported Python versions (`<3.12`).
+- If Airflow is skipped due to Python version, use Docker for Airflow UI/DAG execution.
 
 ## 2) Download public dataset (required)
 
@@ -78,6 +85,12 @@ Validate DVC stage reproducibility:
 
 ```bash
 python -m dvc repro
+```
+
+Optional Airflow import check (when using Python 3.10/3.11):
+
+```bash
+python -c "import airflow; print('airflow_import_ok')"
 ```
 
 ## 5) Inference interface

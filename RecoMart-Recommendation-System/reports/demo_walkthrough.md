@@ -17,7 +17,7 @@
    - validation report in reports/
    - model artifacts in data/models/
 5. Explain the orchestration and experiment tracking:
-   - Prefect flow run
+   - Airflow DAG run
    - MLflow experiment and metrics
 6. Mention next steps such as deployment, real-time ingestion, and API integration.
 
@@ -27,8 +27,9 @@
 - Validation and report generation are automated.
 - MLflow records parameters, metrics, and artifacts for reproducibility.
 
+
 ## Expected evidence
-- Terminal output showing the Prefect flow completed successfully.
+- Airflow DAG run status for `recomart_end_to_end` showing successful task execution.
 - Generated plots in reports/plots/.
 - Validation report PDF in reports/.
 - Model metadata JSON in data/models/.

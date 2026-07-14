@@ -39,7 +39,7 @@ def build_report() -> None:
     story.append(Paragraph("- Validate data quality and monitor issues", styles["BodyText"]))
     story.append(Paragraph("- Prepare and transform data for downstream modeling", styles["BodyText"]))
     story.append(Paragraph("- Build a feature store and train a recommendation model", styles["BodyText"]))
-    story.append(Paragraph("- Orchestrate the pipeline with Prefect and track experiments with MLflow", styles["BodyText"]))
+    story.append(Paragraph("- Orchestrate the pipeline with Airflow and track experiments with MLflow", styles["BodyText"]))
     story.append(Spacer(1, 0.1 * inch))
 
     story.append(Paragraph("3. Methodology / Pipeline", styles["Heading2"]))
@@ -51,7 +51,7 @@ def build_report() -> None:
     story.append(Paragraph("- Validation checks verify missing values, duplicate rows, and rating ranges.", styles["BodyText"]))
     story.append(Paragraph("- Preparation joins product metadata with interaction data, encodes categories, and normalizes attributes.", styles["BodyText"]))
     story.append(Paragraph("- Feature engineering creates user activity frequency, average ratings, and popularity-based features.", styles["BodyText"]))
-    story.append(Paragraph("- Prefect orchestrates the workflow while MLflow records parameters, metrics, and artifacts.", styles["BodyText"]))
+    story.append(Paragraph("- Airflow orchestrates the workflow while MLflow records parameters, metrics, and artifacts.", styles["BodyText"]))
     story.append(Spacer(1, 0.1 * inch))
 
     try:
